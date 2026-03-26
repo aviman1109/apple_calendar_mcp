@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+.venv/
+config/accounts.yaml
+secrets/
+*.pyc

@@ -1,0 +1,37 @@
+default_account_id: family
+
+auth:
+  mode: oauth_required
+  issuer: https://your-project.customers.stytch.dev
+  discovery_url: https://your-project.customers.stytch.dev/.well-known/oauth-authorization-server
+  audience: project-live-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  resource_url: https://apple-mcp.example.com
+  accounts_read_scope: accounts.read
+  calendar_read_scope: calendar.read
+  calendar_write_scope: calendar.write
+  access_rules:
+    - emails:
+        - owner@example.com
+      account_ids:
+        - family
+        - work
+      default_account_id: family
+    - groups:
+        - calendar-readers
+      account_ids:
+        - family
+
+accounts:
+  - account_id: family
+    label: Family iCloud
+    apple_id_file: /run/secrets/icloud_family_apple_id
+    app_password_file: /run/secrets/icloud_family_app_password
+    default_calendar_name: AI
+    readonly: false
+
+  - account_id: work
+    label: Work iCloud
+    apple_id_file: /run/secrets/icloud_work_apple_id
+    app_password_file: /run/secrets/icloud_work_app_password
+    default_calendar_name: Calendar
+    readonly: true
