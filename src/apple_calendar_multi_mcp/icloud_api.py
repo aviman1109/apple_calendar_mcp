@@ -418,8 +418,8 @@ class AppleCalendarClientManager:
         raise AppleCalendarError(f"Event UID '{event_uid}' was not found")
 
     def _connect(self, account: AppleCalendarAccount) -> _AccountSession:
-        apple_id = resolve_value(account.apple_id, account.apple_id_file)
-        app_password = resolve_value(account.app_password, account.app_password_file)
+        apple_id = resolve_value(account.apple_id, account.apple_id_file, account.apple_id_env)
+        app_password = resolve_value(account.app_password, account.app_password_file, account.app_password_env)
         if not apple_id or not app_password:
             raise AppleCalendarError(
                 f"Account '{account.account_id}' must define apple_id/apple_id_file and "

@@ -21,8 +21,10 @@ class AppleCalendarAccount:
     label: str
     apple_id: str | None = None
     apple_id_file: str | None = None
+    apple_id_env: str | None = None
     app_password: str | None = None
     app_password_file: str | None = None
+    app_password_env: str | None = None
     default_calendar_name: str | None = None
     default_calendar_url: str | None = None
     readonly: bool = False
@@ -99,11 +101,14 @@ class AppConfig:
     oidc: OIDCConfig
 
 
-def resolve_value(raw: str | None, file_path: str | None) -> str | None:
-    """Resolve a value directly or from a file path."""
+def resolve_value(raw: str | None, file_path: str | None, env_var: str | None = None) -> str | None:
+    """Resolve a value directly, from a file path, or from an environment variable."""
 
-    if raw and file_path:
-        raise ValueError("Only one of direct value and file path may be provided")
+    sources = sum(1 for s in (raw, file_path, env_var) if s)
+    if sources > 1:
+        raise ValueError("Only one of direct value, file path, and env var may be provided")
+    if env_var:
+        return os.environ.get(env_var) or None
     if file_path:
         return Path(os.path.expanduser(file_path)).read_text().rstrip()
     return raw
@@ -142,8 +147,10 @@ def _normalize_account(raw: dict[str, Any]) -> AppleCalendarAccount:
         label=label,
         apple_id=raw.get("apple_id"),
         apple_id_file=raw.get("apple_id_file"),
+        apple_id_env=raw.get("apple_id_env"),
         app_password=raw.get("app_password"),
         app_password_file=raw.get("app_password_file"),
+        app_password_env=raw.get("app_password_env"),
         default_calendar_name=raw.get("default_calendar_name"),
         default_calendar_url=raw.get("default_calendar_url"),
         readonly=bool(raw.get("readonly", False)),
